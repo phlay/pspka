@@ -1,14 +1,13 @@
-
 WARNING
-=======
+-------
 
-WARNING: This is a new protocol and may have severe security flaws rendering it
+This is a new protocol and may have severe security flaws rendering it
 completly useless. Use the demo programs only for security analysis and not for
 any productive environment.
 
 
-PSPKA - password seeded public key authentication
-=================================================
+PSPKA 
+-----
 
 Let's face it: Passwords suck! And they do in a number of ways
 
@@ -39,8 +38,8 @@ the server without even needing the original password.
 
 To solve these problems i recommend to use a combination of classical password
 hashes (or KDF) and a modern elliptic curve signature scheme: The PSPKA scheme
-uses a KDF, like PBKDF2 or Argon2i, to derive a 256bit
-[EdDSA](https://en.wikipedia.org/wiki/EdDSA) secret key from the users
+uses a KDF, like [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2), to derive a
+256bit [EdDSA](https://en.wikipedia.org/wiki/EdDSA) secret key from the users
 identity and password and then calculates the corresponding EdDSA public key.
 This public key together with the KDF parameters (like salt and iteration
 count) are used as password hash.
@@ -54,14 +53,15 @@ constists of the random nonce together with the signature. This way our user can
 login as usual with identity and password without any saved state, although it
 is recommended to store the KDF parameters.
 
-The PSPKA protocol could also be used to protect a Diffie-Hellman (DH) connection
-between user and server from a man-in-the-middle attack, by using the shared
-DH secret as context in the response. (The context is normaly used to defend
-against a server, trying to reuse a user-response to login as this user on a
-different service.)
+The PSPKA protocol could also be used to protect a [Diffie-Hellman
+(DH)](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange)
+connection between user and server from a [man-in-the-middle
+attack](https://en.wikipedia.org/wiki/Man-in-the-middle_attack), by using the
+shared DH secret as context in the response. (The context is normaly used to
+defend against a server, trying to reuse a user-response to login as this user
+on a different service.)
 
 Problem (2) and limitation of damage are the only reasons to not reuse the same
 password for different services, with this scheme. But if a password is really
 strong and a good KDF is used, there is no security problem in publishing the
-corresponding PSPKA-Hash.
-
+corresponding PSPKA-hash.
