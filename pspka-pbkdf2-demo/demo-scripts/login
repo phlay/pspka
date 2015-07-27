@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SIDE=foobar.de/mail
+SIDE=foobar/mail
 
 if [ ! -x ../cli -o ! -x ../srv ]; then
 	echo "please run compile cli and srv first"
