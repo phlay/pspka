@@ -1,30 +1,34 @@
 
+WARNING
+=======
+
 WARNING: This is a new protocol and may have severe security flaws rendering it
 completly useless. Use the demo programs only for security analysis and not for
 any productive environment.
 
 
 PSPKA - password seeded public key authentication
--------------------------------------------------
+=================================================
 
 Let's face it: Passwords suck! And they do in a number of ways
 
-  a) people do forget them
-  b) people choose weak ones (low entropy)
-  c) companies do lose them
-  d) the company or service potentialy knows your password
+1. people do forget them
+2. people choose weak ones (low entropy)
+3. companies do lose them
+4. the company or service potentialy knows your password
 
-While some problems are intrinsic (like (a)) and can't be helped, there are well
-known technices to attack (b) and (c): Passwords are not stored in clear text
-but instead a password hash (or KDF, see [1]) is used to scramble them. By using
-a 'salt' a KDF makes it difficult for an attacker to use precalculated password
-lists and the heavy cpu demand of a KDF makes them time consuming to brute force
-(modern KDFs also need a significant amount of fast memory to defeat fast custom
-hardware).
+While some problems are intrinsic (like (1)) and can't be helped, there are
+well known technices to attack (2) and (3): Passwords are not stored in clear
+text but instead a password hash (or
+[KDF](http://en.wikipedia.org/wiki/Key_derivation_function)) is used to
+scramble them. By using a 'salt' a KDF makes it difficult for an attacker to
+use precalculated password lists and the heavy cpu demand of a KDF makes them
+time consuming to brute force (modern KDFs also need a significant amount of
+fast memory to defeat fast custom hardware).
 
 But this feature makes them also unattractive on a server with many users, since
 the server is usually the one calculating the password hash. But the big problem
-in letting the server calculate the hash is actually (d): If you don't trust the
+in letting the server calculate the hash is actually (4): If you don't trust the
 server (either it's security or it's maintainers) you are forced to use an
 unique password for it.
 
@@ -35,10 +39,11 @@ the server without even needing the original password.
 
 To solve these problems i recommend to use a combination of classical password
 hashes (or KDF) and a modern elliptic curve signature scheme: The PSPKA scheme
-uses a KDF, like PBKDF2 or Argon2i, to derive a 256bit EdDSA (see [2]) secret
-key from the users identity and password and then calculates the corresponding
-EdDSA public key. This public key together with the KDF parameters (like salt
-and iteration count) are used as password hash.
+uses a KDF, like PBKDF2 or Argon2i, to derive a 256bit
+[EdDSA](https://en.wikipedia.org/wiki/EdDSA) secret key from the users
+identity and password and then calculates the corresponding EdDSA public key.
+This public key together with the KDF parameters (like salt and iteration
+count) are used as password hash.
 
 If the user wants to authorize later a public-key challenge-response method is
 used: The server sends a random challenge (including KDF parameters) and the
@@ -55,13 +60,8 @@ DH secret as context in the response. (The context is normaly used to defend
 against a server, trying to reuse a user-response to login as this user on a
 different service.)
 
-Problem (b) and limitation of damage are the only reasons to not reuse the same
+Problem (2) and limitation of damage are the only reasons to not reuse the same
 password for different services, with this scheme. But if a password is really
 strong and a good KDF is used, there is no security problem in publishing the
 corresponding PSPKA-Hash.
 
-
-
-
-[1]	http://en.wikipedia.org/wiki/Key_derivation_function
-[2]	https://en.wikipedia.org/wiki/EdDSA
