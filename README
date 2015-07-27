@@ -1,0 +1,67 @@
+
+WARNING: This is a new protocol and may have severe security flaws rendering it
+completly useless. Use the demo programs only for security analysis and not for
+any productive environment.
+
+
+PSPKA - password seeded public key authentication
+-------------------------------------------------
+
+Let's face it: Passwords suck! And they do in a number of ways
+
+  a) people do forget them
+  b) people choose weak ones (low entropy)
+  c) companies do lose them
+  d) the company or service potentialy knows your password
+
+While some problems are intrinsic (like (a)) and can't be helped, there are well
+known technices to attack (b) and (c): Passwords are not stored in clear text
+but instead a password hash (or KDF, see [1]) is used to scramble them. By using
+a 'salt' a KDF makes it difficult for an attacker to use precalculated password
+lists and the heavy cpu demand of a KDF makes them time consuming to brute force
+(modern KDFs also need a significant amount of fast memory to defeat fast custom
+hardware).
+
+But this feature makes them also unattractive on a server with many users, since
+the server is usually the one calculating the password hash. But the big problem
+in letting the server calculate the hash is actually (d): If you don't trust the
+server (either it's security or it's maintainers) you are forced to use an
+unique password for it.
+
+The idea is to let the user calculate the KDF and change password verification
+to a challenge-response protocol. But we don't want to give the server the
+password hash either, because if that gets stolen it could be used to login to
+the server without even needing the original password.
+
+To solve these problems i recommend to use a combination of classical password
+hashes (or KDF) and a modern elliptic curve signature scheme: The PSPKA scheme
+uses a KDF, like PBKDF2 or Argon2i, to derive a 256bit EdDSA (see [2]) secret
+key from the users identity and password and then calculates the corresponding
+EdDSA public key. This public key together with the KDF parameters (like salt
+and iteration count) are used as password hash.
+
+If the user wants to authorize later a public-key challenge-response method is
+used: The server sends a random challenge (including KDF parameters) and the
+user uses her secret key (again derived from her identity and password, using
+the salt and KDF parameters from the challenge) to sign the challenge together
+with a random nonce and a context field describing this login. The response
+constists of the random nonce together with the signature. This way our user can
+login as usual with identity and password without any saved state, although it
+is recommended to store the KDF parameters.
+
+The PSPKA protocol could also be used to protect a Diffie-Hellman (DH) connection
+between user and server from a man-in-the-middle attack, by using the shared
+DH secret as context in the response. (The context is normaly used to defend
+against a server, trying to reuse a user-response to login as this user on a
+different service.)
+
+Problem (b) and limitation of damage are the only reasons to not reuse the same
+password for different services, with this scheme. But if a password is really
+strong and a good KDF is used, there is no security problem in publishing the
+corresponding PSPKA-Hash.
+
+
+
+
+[1]	http://en.wikipedia.org/wiki/Key_derivation_function
+[2]	https://en.wikipedia.org/wiki/EdDSA

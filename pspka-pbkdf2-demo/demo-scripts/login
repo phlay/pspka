@@ -1,0 +1,29 @@
+#!/bin/sh
+
+SIDE=foobar.de/mail
+
+if [ ! -x ../cli -o ! -x ../srv ]; then
+	echo "please run compile cli and srv first"
+	exit 1
+fi
+
+if [ ! -e passwd ]; then
+	echo "no password file found; run register script first";
+	exit 1
+fi
+
+echo -n "$SIDE login: "
+read USER
+
+# step 1: create challenge for $USER
+HASH=`grep "^$USER:" passwd |cut -f2 -d:`
+[ -z "$HASH" ] && exit 1
+CHAL=`../srv -g $HASH`
+
+# step 2: create a response to challenge bound to $SIDE
+SIG=`../cli "$USER" $SIDE $CHAL`
+
+# step 3: verify response
+#SIDE=bank.de/www
+echo -n "using signature to login as $USER into $SIDE: "
+../srv $SIDE $CHAL $SIG $HASH

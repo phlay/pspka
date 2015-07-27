@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ ! -x ../cli -o ! -x ../srv ]; then
+	echo "please run compile cli and srv first"
+	exit 1
+fi
+
+echo -e "PSPKA-PBKDF2 demo scripts, don't use real passwords\n"
+
+echo -n "login: "
+read USER
+
+
+# remove user, if she already exists
+if [ -e passwd ]; then
+	egrep -v "^$USER:" passwd > passwd.new
+fi
+
+# create new entry
+HASH=`../cli -g "$USER"`
+echo "$USER:$HASH" >> passwd.new
+
+mv -f passwd.new passwd
