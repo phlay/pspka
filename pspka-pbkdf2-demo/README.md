@@ -1,35 +1,32 @@
 PSPKA-PBKDF2 demo
-================
+-----------------
 
-This is a demo application for the PSPKA protocol using PBKDF2 as KDF and
-ed25519 for signatures. For ed25519 the libeddsa library
-(https://github.com/phlay/libeddsa) must be installed.
+This is a demo application for the PSPKA protocol using
+[PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) as KDF and
+[ed25519](https://en.wikipedia.org/wiki/EdDSA) for signatures.
 
-Please note that cli and srv are for demonstration purpose only and not ment to
+Please note that *cli* and *srv* are for demonstration purpose only and not meant to
 be used in a production environment. Moreover the PSPKA protocol is pretty new
 and there maybe unknown security flaws.
 
-While PBKDF2 is the only standardised KDF for password hashing at the moment,
-it has an obsolete design and i don't recommend it. The Password Hashing
-Competion has chosen Argon2 as it's winner and i will write a PSPKA-Argon2i
-demo soonish.
+While PBKDF2 is a standard KDF for password hashing and key stretching i don't
+recommend it. The [Password Hashing Competion](https://password-hashing.net)
+has chosen Argon2 as winner and i will write a PSPKA-Argon2i demo soonish.
 
 
 Compile
 -------
 
-Before you compile make sure to install [libeddsa](https://github.com/phlay/libedds).
+Before you compile make sure to install [libeddsa](https://github.com/phlay/libeddsa).
 
 Compile by just typing:
 ```
 make
 ```
 
-After compiling with make two test-programs 'cli' and 'srv' are created: 'cli'
-simulates the client and 'srv' the server verifying the client's login.
-You can experiment with these directly or use (the extremly simple and unsecure)
-demo scripts in the demo-scripts folder.
-
+After compiling with make two test-programs *cli* and *srv* are created: *cli*
+simulates the client and *srv* the server. You can experiment with these directly
+or use (the extremly simple and unsecure) demo scripts in the demo-scripts folder.
 
 
 
