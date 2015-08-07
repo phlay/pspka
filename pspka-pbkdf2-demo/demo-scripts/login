@@ -24,6 +24,6 @@ CHAL=`../srv -g $HASH`
 SIG=`../cli "$USER" $SIDE $CHAL`
 
 # step 3: verify response
-#SIDE=bank.de/www
+#SIDE=bank/www
 echo -n "using signature to login as $USER into $SIDE: "
 ../srv $SIDE $CHAL $SIG $HASH
